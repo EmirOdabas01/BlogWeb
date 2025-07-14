@@ -1,0 +1,50 @@
+﻿@page
+@model BlogWebsiteClient.Pages.IndexModel
+@{
+    ViewData["Title"] = "Tüm Postlar";
+}
+
+<h1 class="mb-4">Tüm Postlar</h1>
+
+@if (ViewData["error"] != null)
+{
+    <div class="alert alert-danger">@ViewData["error"]?.ToString()</div>
+}
+else if (Model.Posts == null || !Model.Posts.Any())
+{
+    <div class="alert alert-warning">Failed to fetch posts or no posts available.</div>
+}
+
+<div class="row">
+    @foreach (var post in Model.Posts ?? new List<BlogWebsiteClient.Models.PostVm>())
+    {
+        var coverBlock = post?.blocks?.FirstOrDefault(p => p.order == 0);
+        var imageUrl = coverBlock?.imageUrl ?? "images/default.png";
+        var contentBlock = post?.blocks?.FirstOrDefault(p => p.order == 1);
+        var summary = contentBlock?.content?.Length > 350
+        ? contentBlock.content.Substring(0, 350) + "..."
+        : contentBlock?.content;
+
+        <div class="col-12 mb-4">
+            <a asp-page="/PostDetail" asp-route-id="@post.id" class="text-decoration-none text-dark">
+                <div class="card shadow-sm d-flex flex-column flex-md-row" style="min-height: 200px;">
+
+                    <div class="col-md-4">
+                        <img src="@imageUrl" alt="Kapak Fotoğrafı"
+                             class="img-fluid rounded-start w-100 h-100"
+                             style="object-fit: cover; max-height: 300px;" />
+                    </div>
+
+                    <div class="col-md-8 p-3">
+                        <h5 class="card-title">@post.header</h5>
+                        <p class="card-subtitle text-muted mb-2">Kategori: @post.postCategory</p>
+                        @if (!string.IsNullOrWhiteSpace(summary))
+                        {
+                            <p class="card-text">@summary</p>
+                        }
+                    </div>
+                </div>
+            </a>
+        </div>
+    }
+</div>

@@ -1,0 +1,24 @@
+﻿body {
+    background-color: #f9f9f9;
+    padding: 0 15%;
+}
+
+header img.profile-pic {
+    max-width: 120px;
+    border-radius: 50%;
+    margin: 20px auto;
+    display: block;
+}
+
+.navbar-nav .nav-item .dropdown-menu {
+    background-color: white;
+}
+
+.navbar-nav .nav-item:hover .dropdown-menu {
+    display: block;
+}
+
+.navbar-nav .nav-link {
+    font-weight: 500;
+}
+ 

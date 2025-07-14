@@ -1,0 +1,42 @@
+﻿@page "{id:int}"
+@model BlogWebsiteClient.Pages.DetailsModel
+@{
+    ViewData["Title"] = Model.Post?.header ?? "Post Detay";
+    var coverBlock = Model.Post?.blocks?.FirstOrDefault(b => b.order == 0);
+    var imageUrl = coverBlock?.imageUrl ?? "/images/default.png";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <img src="@imageUrl" alt="Kapak Fotoğrafı" class="img-fluid rounded mb-4" style="max-height: 400px; object-fit: cover; width: 100%;" />
+
+            <h1 class="display-5">@Model.Post?.header</h1>
+            <p class="text-muted">Kategori: @Model.Post?.postCategory</p>
+
+            <hr />
+
+            @if (Model.Post?.blocks != null)
+            {
+                foreach (var block in Model.Post.blocks.Where(b => b.order != 0).OrderBy(b => b.order))
+                {
+                    <div class="mb-5">
+                        @if (!string.IsNullOrWhiteSpace(block.content))
+                        {
+                            <p>@block.content</p>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(block.imageUrl))
+                        {
+                            <img src="@block.imageUrl" alt="İçerik Görseli" class="img-fluid rounded mt-2" style="max-height: 400px; object-fit: contain;" />
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <p>İçerik bulunamadı.</p>
+            }
+        </div>
+    </div>
+</div>

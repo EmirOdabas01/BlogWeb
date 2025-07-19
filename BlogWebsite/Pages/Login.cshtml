@@ -1,0 +1,18 @@
+﻿@page
+@model BlogWebsite.Pages.LoginModel
+
+@if (ViewData["error"] != null)
+{
+    <div class="alert alert-danger mt-2">@ViewData["error"]</div>
+}
+<form method="post">
+    <div class="mb-3">
+        <label for="username">Kullanıcı Adı</label>
+        <input name="UserName" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label for="password">Şifre</label>
+        <input name="Password" type="password" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Giriş Yap</button>
+</form>

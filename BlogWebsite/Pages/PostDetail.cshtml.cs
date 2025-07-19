@@ -1,3 +1,4 @@
+using BlogWebsiteClient.Enums;
 using BlogWebsiteClient.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -10,17 +11,20 @@ namespace BlogWebsiteClient.Pages
         private readonly HttpClient httpClient;
 
         public PostVm? Post { get; set; }  
-
         public DetailsModel(IHttpClientFactory httpClientFactory)
         {
             httpClient = httpClientFactory.CreateClient("BlogClient");
         }
 
-        public async Task OnGetAsync(int id)
+        public async Task OnGetAsync(string idOrCategory)
         {
+            HttpResponseMessage response;
             try
             {
-                var response = await httpClient.GetAsync($"get-post/{id}");
+                if (idOrCategory == "about")
+                    response = await httpClient.GetAsync($"post/get-category/{PostType.About}");
+                else
+                    response = await httpClient.GetAsync("post/get/" + idOrCategory);
 
                 if (!response.IsSuccessStatusCode)
                 {

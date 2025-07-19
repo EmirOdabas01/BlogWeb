@@ -1,9 +1,20 @@
+using BlogWebsite.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-builder.Services.AddHttpClient("BlogClient", client => client.BaseAddress = new Uri("https://localhost:7259"));
+builder.Services.AddHttpClient("BlogClient", client => client.BaseAddress = new Uri("https://localhost:7259/api/"));
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ApiHelper>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -17,6 +28,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseRouting();
+
+app.UseSession();
 
 app.UseAuthorization();
 

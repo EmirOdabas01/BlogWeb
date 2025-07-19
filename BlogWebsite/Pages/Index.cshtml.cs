@@ -1,4 +1,6 @@
-﻿using BlogWebsiteClient.Models;
+﻿using BlogWebsite.Services;
+using BlogWebsiteClient.Enums;
+using BlogWebsiteClient.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Text.Json;
@@ -15,11 +17,20 @@ namespace BlogWebsiteClient.Pages
             httpClient = httpClientFactory.CreateClient("BlogClient");
         }
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(string category)
         {
+
+            HttpResponseMessage response;
             try
             {
-                var response = await httpClient.GetAsync("get-all");
+                if(category == "technology")
+                     response = await httpClient.GetAsync($"post/get-category/{PostType.Technology}");
+                else if(category == "general")
+                      response = await httpClient.GetAsync($"post/get-category/{PostType.Blog}");
+                else if(category == "project")
+                      response = await httpClient.GetAsync($"post/get-category/{PostType.Project}");
+                else
+                    response = await httpClient.GetAsync("post/get-all");
 
                 if (!response.IsSuccessStatusCode)
                 {

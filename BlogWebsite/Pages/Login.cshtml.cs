@@ -1,3 +1,4 @@
+using BlogWebsite.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Text;
@@ -30,34 +31,61 @@ namespace BlogWebsite.Pages
                 password = Password
             };
 
-            var content = new StringContent(JsonSerializer.Serialize(loginDto), Encoding.UTF8, "application/json");
-
-            var response = await client.PostAsync("auth/admin-login", content);
-
-            if (!response.IsSuccessStatusCode)
+            HttpResponseMessage response;
+            try
             {
-                ViewData["error"] = "Giriþ baþarýsýz.";
-                return Page();
+                var content = new StringContent(JsonSerializer.Serialize(loginDto), Encoding.UTF8, "application/json");
+                response = await client.PostAsync("auth/admin-login", content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    ViewData["error"] = "Giriþ baþarýsýz.";
+                    return Page();
+                }
+            }   
+            catch (Exception)
+            {
+                    ViewData["error"] = "Giriþ baþarýsýz.";
+                    return Page();
             }
 
-            var json = await response.Content.ReadAsStringAsync();
-            var result = JsonDocument.Parse(json).RootElement;
+            var tokens = await response.Content.ReadFromJsonAsync<TokenResponse>();
+            SetTokens(tokens!.accessToken, tokens.refreshToken);
 
-            var accessToken = result.GetProperty("accessToken").GetString();
-            var refreshToken = result.GetProperty("refreshToken").GetString();
-
-            HttpContext.Session.SetString("AccessToken", accessToken!);
-
-            Response.Cookies.Append("RefreshToken", refreshToken!,
-                new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.Strict,
-                    Expires = DateTimeOffset.UtcNow.AddDays(7)
-                });
+            Response.Cookies.Append("userId", tokens.userId.ToString(), new CookieOptions()
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddDays(7),
+                Path = "/"
+            });
 
             return RedirectToPage("/Index");
         }
+
+        private void SetTokens(string accessToken, string refreshToken)
+        {
+            Response.Cookies.Append("accessToken", accessToken, new CookieOptions()
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddMinutes(10),
+                Path = "/"
+
+            });
+
+            Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions()
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddDays(7),
+                Path = "/"
+            });
+
+        }
+
     }
 }

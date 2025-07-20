@@ -1,0 +1,16 @@
+﻿@page
+@model BlogWebsite.Pages.AddPostModel
+@{
+}
+<form method="post">
+    <input type="text" name="Header" placeholder="Başlık" />
+    <select name="PostCategory">
+        <option value="0">Hakkımda</option>
+        <option value="1">Proje</option>
+        <option value="2">Blog</option>
+        <option value="3">Teknoloji</option>
+    </select>
+
+    <textarea id="tiny" name="PostContent"></textarea>
+    <button type="submit">Kaydet</button>
+</form>

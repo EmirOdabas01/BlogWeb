@@ -7,8 +7,8 @@ namespace BlogWebsite.Pages
     {
         public IActionResult OnGet()
         {
-            HttpContext.Session.Remove("AccessToken");
-            Response.Cookies.Delete("RefreshToken");
+            Response.Cookies.Delete("accessToken");
+            Response.Cookies.Delete("refreshToken");
             return RedirectToPage("/Index");
         }
     }
